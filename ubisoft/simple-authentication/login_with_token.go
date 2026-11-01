@@ -1,0 +1,55 @@
+package protocol
+
+import (
+	"fmt"
+
+	nex "github.com/PretendoNetwork/nex-go/v2"
+	"github.com/PretendoNetwork/nex-go/v2/types"
+	"github.com/PretendoNetwork/nex-protocols-go/v2/globals"
+)
+
+func (protocol *Protocol) handleLoginWithToken(packet nex.PacketInterface) {
+	if protocol.LoginWithToken == nil {
+		err := nex.NewError(nex.ResultCodes.Core.NotImplemented, "SimpleAuthentication::LoginWithToken not implemented")
+
+		globals.Logger.Warning(err.Message)
+		globals.RespondError(packet, ProtocolID, err)
+
+		return
+	}
+
+	request := packet.RMCMessage()
+	callID := request.CallID
+	parameters := request.Parameters
+	endpoint := packet.Sender().Endpoint()
+	parametersStream := nex.NewByteStreamIn(parameters, endpoint.LibraryVersions(), endpoint.ByteStreamSettings())
+
+	strToken, err := parseLoginWithTokenRequest(parametersStream)
+	if err != nil {
+		_, rmcError := protocol.LoginWithToken(err, packet, callID, strToken)
+		if rmcError != nil {
+			globals.RespondError(packet, ProtocolID, rmcError)
+		}
+
+		return
+	}
+
+	rmcMessage, rmcError := protocol.LoginWithToken(nil, packet, callID, strToken)
+	if rmcError != nil {
+		globals.RespondError(packet, ProtocolID, rmcError)
+		return
+	}
+
+	globals.Respond(packet, rmcMessage)
+}
+
+// parseLoginWithTokenRequest decodes the parameters of Simple Authentication::LoginWithToken from the given stream
+func parseLoginWithTokenRequest(stream *nex.ByteStreamIn) (types.String, error) {
+	var strToken types.String
+
+	if err := strToken.ExtractFrom(stream); err != nil {
+		return strToken, fmt.Errorf("failed to read strToken from parameters. %s", err.Error())
+	}
+
+	return strToken, nil
+}
