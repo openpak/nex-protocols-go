@@ -132,7 +132,7 @@ func (protocol *Protocol) SetHandlerDeleteTarget(handler func(err error, packet 
 
 // SetHandlerClearTarget sets the handler for the ClearTarget method
 func (protocol *Protocol) SetHandlerClearTarget(handler func(err error, packet nex.PacketInterface, callID uint32) (*nex.RMCMessage, *nex.Error)) {
-	protocol.ClearMySubscriptionData = handler
+	protocol.ClearTarget = handler
 }
 
 // SetHandlerGetFriendSubscriptionData sets the handler for the GetFriendSubscriptionData method
