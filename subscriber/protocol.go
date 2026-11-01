@@ -13,7 +13,7 @@ import (
 
 const (
 	// ProtocolID is the protocol ID for the Subscriber protocol
-	ProtocolID = 0x6E
+	ProtocolID = 0x79
 
 	// MethodHello is the method ID for the method Hello
 	MethodHello = 0x1
