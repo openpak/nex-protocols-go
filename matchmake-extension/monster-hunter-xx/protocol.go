@@ -22,6 +22,9 @@ const (
 	// MethodGetFriendUserProfiles is the method ID for the GetFriendUserProfiles method
 	MethodGetFriendUserProfiles = 0x37
 
+	// MethodGetFriends is the method ID for the GetFriends method
+	MethodGetFriends = 0x38
+
 	// MethodAddFriends is the method ID for the AddFriends method
 	MethodAddFriends = 0x39
 
@@ -35,6 +38,7 @@ const (
 var patchedMethods = []uint32{
 	MethodUpdateFriendUserProfile,
 	MethodGetFriendUserProfiles,
+	MethodGetFriends,
 	MethodAddFriends,
 	MethodRemoveFriend,
 	MethodFindCommunityByOwner,
@@ -49,6 +53,7 @@ type Protocol struct {
 	matchmakeExtensionProtocol
 	UpdateFriendUserProfile func(err error, packet nex.PacketInterface, callID uint32, param matchmake_extension_monster_hunter_x_x_types.FriendUserParam) (*nex.RMCMessage, *nex.Error)
 	GetFriendUserProfiles   func(err error, packet nex.PacketInterface, callID uint32, pids types.List[types.PID]) (*nex.RMCMessage, *nex.Error)
+	GetFriends              func(err error, packet nex.PacketInterface, callID uint32) (*nex.RMCMessage, *nex.Error)
 	AddFriends              func(err error, packet nex.PacketInterface, callID uint32, pids types.List[types.PID]) (*nex.RMCMessage, *nex.Error)
 	RemoveFriend            func(err error, packet nex.PacketInterface, callID uint32, pid types.PID) (*nex.RMCMessage, *nex.Error)
 	FindCommunityByOwner    func(err error, packet nex.PacketInterface, callID uint32, id types.UInt64, resultRange types.ResultRange) (*nex.RMCMessage, *nex.Error)
@@ -72,6 +77,8 @@ func (protocol *Protocol) HandlePacket(packet nex.PacketInterface) {
 		protocol.handleUpdateFriendUserProfile(packet)
 	case MethodGetFriendUserProfiles:
 		protocol.handleGetFriendUserProfiles(packet)
+	case MethodGetFriends:
+		protocol.handleGetFriends(packet)
 	case MethodAddFriends:
 		protocol.handleAddFriends(packet)
 	case MethodRemoveFriend:
