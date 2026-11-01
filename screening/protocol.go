@@ -34,7 +34,7 @@ type Protocol struct {
 type Interface interface {
 	Endpoint() nex.EndpointInterface
 	SetEndpoint(endpoint nex.EndpointInterface)
-	SetHandlerReportDataStoreContent(handler func(err error, packet nex.PacketInterface, callID uint32, packetPayload []byte) (*nex.RMCMessage, *nex.Error))
+	SetHandlerReportDataStoreContent(handler func(err error, packet nex.PacketInterface, callID uint32, pContentParam screening_types.ScreeningDataStoreContentParam, pViolationParam screening_types.ScreeningUGCViolationParam) (*nex.RMCMessage, *nex.Error))
 	SetHandlerReportUser(handler func(err error, packet nex.PacketInterface, callID uint32, packetPayload []byte) (*nex.RMCMessage, *nex.Error))
 }
 
