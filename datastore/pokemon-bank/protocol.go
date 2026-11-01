@@ -67,6 +67,9 @@ const (
 
 	// MethodRequestMigration is the method ID for the RequestMigration method
 	MethodRequestMigration = 0x38
+
+	// MethodGetMigrationStatus is the method ID for the GetMigrationStatus method
+	MethodGetMigrationStatus = 0x39
 )
 
 var patchedMethods = []uint32{
@@ -87,6 +90,7 @@ var patchedMethods = []uint32{
 	MethodRollbackBankObject,
 	MethodGetUnlockKey,
 	MethodRequestMigration,
+	MethodGetMigrationStatus,
 }
 
 type dataStoreProtocol = datastore.Protocol
@@ -113,6 +117,7 @@ type Protocol struct {
 	RollbackBankObject       func(err error, packet nex.PacketInterface, callID uint32, slotID types.UInt16, transactionParam datastore_pokemon_bank_types.BankTransactionParam, isForce types.Bool) (*nex.RMCMessage, *nex.Error)
 	GetUnlockKey             func(err error, packet nex.PacketInterface, callID uint32, challengeValue types.UInt32) (*nex.RMCMessage, *nex.Error)
 	RequestMigration         func(err error, packet nex.PacketInterface, callID uint32, oneTimePassword types.String, boxes types.List[types.UInt32]) (*nex.RMCMessage, *nex.Error)
+	GetMigrationStatus       func(err error, packet nex.PacketInterface, callID uint32) (*nex.RMCMessage, *nex.Error)
 }
 
 // HandlePacket sends the packet to the correct RMC method handler
@@ -163,6 +168,8 @@ func (protocol *Protocol) HandlePacket(packet nex.PacketInterface) {
 		protocol.handleGetUnlockKey(packet)
 	case MethodRequestMigration:
 		protocol.handleRequestMigration(packet)
+	case MethodGetMigrationStatus:
+		protocol.handleGetMigrationStatus(packet)
 	default:
 		errMessage := fmt.Sprintf("Unsupported DataStore (Pokemon Bank) method ID: %#v\n", message.MethodID)
 		err := nex.NewError(nex.ResultCodes.Core.NotImplemented, errMessage)
