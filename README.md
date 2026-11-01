@@ -57,3 +57,11 @@ func main() {
 	nexServer.Listen(60000)
 }
 ```
+
+### OpenPak fork
+
+OpenPak's fork of the Pretendo module. Branch `openpak` is `v2.3.7` plus separate commits: the
+Ubisoft / Quazal Rendez-Vous protocol definitions under `ubisoft/`, `shop/pokemon-bank`,
+`ranking/super-smash-bros-4`, missing Pokemon Bank and MHXX methods, and small definition fixes
+(ranking 2, subscription, screening, subscriber). Each commit can be sent upstream on its own.
+Licence unchanged (AGPL-3.0).
